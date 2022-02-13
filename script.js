@@ -54,3 +54,23 @@ template('about',about());
 route('/','home');
 route('/about','about');
 
+// We give the actual URL, we can see if the url change
+function resolveRoute(route){
+    try{
+        return routes[route];
+    } catch(e){
+        throw new Error(`Route ${route} not found`);
+    };
+};
+
+//Function to obtain the actual url, find if the url exists and load the route.
+function router(evt){
+    let url = window.location.hash.slice(1) || '/';
+    let route = resolveRoute(url);
+    
+    route();
+};
+
+window.addEventListener('load',router);
+window.addEventListener('hashchange',router);
+
