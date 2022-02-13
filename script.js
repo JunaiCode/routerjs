@@ -1,76 +1,92 @@
-let routes= {};
-let templates= {};
+const ROUTES = {};
+const TEMPLATES =  {};
 
-// Call the id of the div in the html
-let app_div = document.getElementById('app');
+let body = document.getElementById('bod');
 
-//Funtions of the pages
-function home(){
-    let div = document.createElement('div');
-    let link = document.createElement('a');
-    link.href = '#/';
-    link.innerText = 'Home';
+/* Views */
 
-    div.innerHTML = '<h1>Home</h1>';
-    div.appendChild(link);
-    app_div.appendChild(div);
-
-}
-function about(){
-    let div = document.createElement('div');
-    let link = document.createElement('a');
-    link.href = '#/about';
-    link.innerText = 'About';
-
-    div.innerHTML = '<h1>About</h1>';
-    div.appendChild(link);
-    app_div.appendChild(div);
-
-};
-
-// ask if we give the name of the template of the function, and associate a template with a route
-function route(path,template){
-    if(typeof template === 'function'){
-        return routes[path] = template;
-    }
-    else if( typeof template === 'string'){
-        return routes[path] = templates[template];
-    }
-    else{
-        return;
-    };
-};
-
-// Create a template, receive the name, and the function that load the DOM elements.
-function template(name,templateFunction){
-    return templates[name] = templateFunction;
-};
-
-// Instance of the function template
-template('home',home());
-template('about',about());
-
-// Define the route to template mapping
-route('/','home');
-route('/about','about');
-
-// We give the actual URL, we can see if the url change
-function resolveRoute(route){
-    try{
-        return routes[route];
-    } catch(e){
-        throw new Error(`Route ${route} not found`);
-    };
-};
-
-//Function to obtain the actual url, find if the url exists and load the route.
-function router(evt){
-    let url = window.location.hash.slice(1) || '/';
-    let route = resolveRoute(url);
+function home () {
+    body.innerHTML = `<div id="app" class="app"></div>`
     
+    let app = document.getElementById('app');
+    let div = document.createElement('div');
+    let a_c_nav__about = document.createElement('a');
+    a_c_nav__about.href = "#/about";
+    a_c_nav__about.innerText = "Home";
+    
+    div.innerHTML = `
+    <h1>Home</h1>
+    `;
+    
+    div.appendChild(a_c_nav__about);
+    app.appendChild(div);
+};
+
+function about() {
+    body.innerHTML = `<div id="app" class="app"></div>`
+    
+    let app = document.getElementById('app');
+    let div = document.createElement('div');
+    let a_c_nav__home = document.createElement('a');
+    a_c_nav__home.href = "#/";
+    a_c_nav__home.innerText = "About";
+    
+    div.innerHTML = `
+    <h1>About</h1>
+    `;
+    
+    div.appendChild(a_c_nav__home);
+    app.appendChild(div);
+};
+
+/* Router */
+
+function route (path, template) {
+    if (typeof path === 'function') {
+        return ROUTES[path] = template;
+    } else if (typeof path === 'string') {
+        return ROUTES[path] = TEMPLATES[template];
+    } else {
+        return;
+    }
+};
+
+function router (event) {
+    let url = window.location.hash.slice(1) || '/';
+    let route = resolve(url);
+
     route();
 };
 
-window.addEventListener('load',router);
-window.addEventListener('hashchange',router);
+/* Template registerer */
 
+function template (name, templateFunction) {
+    return TEMPLATES[name] = templateFunction;
+}
+
+
+/* Mapping */
+
+template('home', () => {home();});
+template('about', () => {about();});
+
+/* Routing */
+
+route('/', 'home');
+route('/about', 'about');
+
+
+/* Resolver */
+
+function resolve (route) {
+    try {
+        return ROUTES[route];
+    } catch (e) {
+        throw new Error(`Route ${route} not found`);
+    }
+};
+
+/* Windows */
+
+window.addEventListener('load', router);
+window.addEventListener('hashchange', router);
